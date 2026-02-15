@@ -9,7 +9,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect(process.env.DB_URL)
+const adsRoutes = require('./routes/ads.routes');
+
+app.use('/api', adsRoutes);
+
+mongoose
+  .connect(process.env.DB_URL)
   .then(() => {
     console.log('Connected to the database');
 
@@ -17,6 +22,6 @@ mongoose.connect(process.env.DB_URL)
       console.log('Server is running on port: 8000');
     });
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Database connection error:', err);
   });
