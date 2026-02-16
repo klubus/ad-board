@@ -10,8 +10,10 @@ app.use(express.json());
 app.use(cors());
 
 const adsRoutes = require('./routes/ads.routes');
+const authRoutes = require('./routes/auth.routes');
 
 app.use('/api', adsRoutes);
+app.use('/auth', authRoutes);
 
 mongoose
   .connect(process.env.DB_URL)
