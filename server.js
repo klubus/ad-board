@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo').default;
 const app = express();
+const path = require('path');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -25,6 +26,8 @@ const authRoutes = require('./routes/auth.routes');
 
 app.use('/api', adsRoutes);
 app.use('/auth', authRoutes);
+app.use(express.static(path.join(__dirname, '/client/build')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 mongoose
   .connect(process.env.DB_URL)
