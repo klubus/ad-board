@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 app.use(
   session({
-    secret: 'xyz567',
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({

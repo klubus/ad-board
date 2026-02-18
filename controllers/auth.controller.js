@@ -1,5 +1,6 @@
 const User = require('../models/User.model');
 const bcrypt = require('bcryptjs');
+const Session = require('../models/Session.model');
 
 exports.register = async (req, res) => {
   try {
@@ -43,10 +44,15 @@ exports.login = async (req, res) => {
       const user = await User.findOne({ login });
 
       if (!user) {
-        res.status(400).send({ message: 'Login or password is incorrect' });
+        return res
+          .status(400)
+          .send({ message: 'Login or password is incorrect' });
       } else {
         if (bcrypt.compareSync(password, user.password)) {
-          req.session.login = user.login;
+          req.session.user = {
+            id: user._id,
+            login: user.login,
+          };
           res.status(200).send({ message: 'Login successful' });
         } else {
           res.status(400).send({ message: 'Login or password is incorrect' });
@@ -55,11 +61,19 @@ exports.login = async (req, res) => {
     } else {
       res.status(400).send({ message: 'Bad request' });
     }
-  } catch (error) {
+  } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
 
 exports.getUser = async (req, res) => {
   res.send('You are logged!');
+};
+
+exports.deleteSession = async (req, res) => {
+  req.session.destroy();
+  if (process.env.NODE_ENV !== 'production') {
+    await Session.deleteMany({});
+  }
+  res.status(200).send({ message: 'Logged out' });
 };
