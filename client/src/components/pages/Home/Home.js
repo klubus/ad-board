@@ -1,0 +1,25 @@
+import MiniPostsList from '../MiniPostsList/MiniPostsList';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import { Link } from 'react-router-dom';
+
+const Home = () => {
+  return (
+    <section>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2 className="m-4">All posts</h2>
+        <Button as={Link} to={`/post/add`} variant="outline-info">
+          Add post
+        </Button>
+      </div>
+      <Container>
+        <Row>
+          <MiniPostsList />
+        </Row>
+      </Container>
+    </section>
+  );
+};
+
+export default Home;

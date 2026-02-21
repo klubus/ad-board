@@ -18,6 +18,9 @@
     "express-session": "^1.19.0",
     "mongoose": "^9.2.1",
     "multer": "1.4.4",
+    "react-datepicker": "^9.1.0",
+    "react-hook-form": "^7.71.2",
+    "react-quill": "^2.0.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
