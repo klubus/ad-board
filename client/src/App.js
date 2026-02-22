@@ -6,6 +6,7 @@ import { Routes, Route } from 'react-router-dom';
 import SinglePost from './components/pages/SinglePost/SinglePost.js';
 import AddPost from './components/pages/AddPost/AddPost.js';
 import EditPost from './components/pages/EditPost/EditPost.js';
+import Register from './components/pages/Register/Register.js';
 
 const App = () => {
   return (
@@ -18,6 +19,9 @@ const App = () => {
           <Route path="/post/1" element={<SinglePost />} />
           <Route path="/post/add" element={<AddPost />} />
           <Route path="/post/edit/:id" element={<EditPost />} />
+          {/* <Route path="/login" element={<Login />} /> */}
+          <Route path="/register" element={<Register />} />
+          {/* <Route path="/logout" element={<Logout />} /> */}
         </Routes>
       </Container>
     </main>
