@@ -1,4 +1,5 @@
 // selectors
+export const getUser = (state) => state.user;
 
 // actions
 const createActionName = (actionName) => `app/users/${actionName}`;

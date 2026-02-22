@@ -1,53 +1,75 @@
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllAds, fetchAds } from '../../../redux/adsRedux';
 import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
 const MiniPostsList = () => {
-  return (
-    <Row xs={1} className="g-3">
-      {Array.from({ length: 4 }).map((_, idx) => (
-        <Col key={idx}>
-          <Card>
-            <Row className="g-0">
-              <Col md={3}>
-                <Card.Img
-                  src="http://localhost:8000/uploads/about-us-1771434617202.jpg"
-                  style={{
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
-              </Col>
+  const dispatch = useDispatch();
+  const ads = useSelector(getAllAds);
 
-              <Col md={6}>
-                <Card.Body>
-                  <Card.Title>Title</Card.Title>
-                  <Card.Text>Description</Card.Text>
-                </Card.Body>
-              </Col>
-              <Col
-                md={1}
-                className="d-flex justify-content-center align-items-center"
-              >
-                <Card.Body>
-                  <Card.Text>200$</Card.Text>
-                </Card.Body>
-              </Col>
-              <Col
-                md={2}
-                className="d-flex justify-content-center align-items-center"
-              >
-                <Button as={Link} to={`/post/1`} variant="outline-info me-2">
-                  Read more
-                </Button>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-      ))}
-    </Row>
+  useEffect(() => {
+    dispatch(fetchAds());
+  }, [dispatch]);
+
+  return (
+    <section>
+      <Row>
+        {ads && ads.length > 0 ? (
+          ads.map((ad) => (
+            <Col key={ad._id} md={12} className="mb-3">
+              <Card style={{ maxHeight: '200px', overflow: 'hidden' }}>
+                <Row className="g-0">
+                  <Col md={3}>
+                    <Card.Img
+                      src={
+                        ad.image
+                          ? `http://localhost:8000/uploads/${ad.image}`
+                          : 'http://localhost:8000/uploads/about-us-1771434617202.jpg'
+                      }
+                    />
+                  </Col>
+
+                  <Col md={6}>
+                    <Card.Body>
+                      <Card.Title>{ad.title}</Card.Title>
+                      <Card.Text>{ad.description}</Card.Text>
+                    </Card.Body>
+                  </Col>
+
+                  <Col
+                    md={1}
+                    className="d-flex justify-content-center align-items-center"
+                  >
+                    <Card.Body>
+                      <Card.Text>{ad.price ? `${ad.price}$` : 'N/A'}</Card.Text>
+                    </Card.Body>
+                  </Col>
+
+                  <Col
+                    md={2}
+                    className="d-flex justify-content-center align-items-center"
+                  >
+                    <Button
+                      as={Link}
+                      to={`/post/${ad._id}`}
+                      variant="outline-info me-2"
+                    >
+                      Read more
+                    </Button>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
+          ))
+        ) : (
+          <p>No ads available</p>
+        )}
+      </Row>
+    </section>
   );
 };
 

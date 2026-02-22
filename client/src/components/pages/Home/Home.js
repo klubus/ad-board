@@ -1,10 +1,21 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import MiniPostsList from '../MiniPostsList/MiniPostsList';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { Link } from 'react-router-dom';
 
+import { fetchAds, getAllAds } from '../../../redux/adsRedux';
+
 const Home = () => {
+  const dispatch = useDispatch();
+  const ads = useSelector(getAllAds);
+
+  useEffect(() => {
+    dispatch(fetchAds());
+  }, [dispatch]);
+
   return (
     <section>
       <div className="d-flex justify-content-between align-items-center">
@@ -13,9 +24,10 @@ const Home = () => {
           Add post
         </Button>
       </div>
+
       <Container>
         <Row>
-          <MiniPostsList />
+          <MiniPostsList posts={ads} />
         </Row>
       </Container>
     </section>
