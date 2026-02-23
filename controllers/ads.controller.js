@@ -20,19 +20,22 @@ exports.getAdById = async (req, res) => {
 
 exports.createAd = async (req, res) => {
   try {
-    const { title, description, price, image, location, seller } = req.body;
+    const { title, description, price, location, seller } = req.body;
+    let image = req.file ? req.file.filename : req.body.image;
+
     const newAd = new Ad({
-      title: title,
-      description: description,
-      price: price,
-      image: image,
-      location: location,
-      seller: seller,
+      title,
+      description,
+      price,
+      location,
+      seller,
+      image,
     });
+
     await newAd.save();
-    res.status(201).json({ message: 'OK' });
+    res.status(201).json(newAd);
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err.message, errors: err.errors });
   }
 };
 

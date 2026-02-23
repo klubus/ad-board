@@ -4,19 +4,28 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAds, getAdById } from '../../../redux/adsRedux';
+import { useEffect } from 'react';
+import { useParams } from 'react-router';
 
 const SinglePost = () => {
   const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const ad = useSelector((state) => getAdById(state, id));
 
-  const postData = {
-    title: 'aa',
-    seller: 'bb',
-    publishedDate: '11',
-    description: 'cc',
-    location: 'dd',
-    price: 11,
-  };
+  useEffect(() => {
+    dispatch(fetchAds());
+  }, [dispatch]);
 
+  if (!ad) {
+    return (
+      <Container className="w-50">
+        <p>Loading post...</p>
+      </Container>
+    );
+  }
   function showDeleteModal() {
     setShowModal(true);
   }
@@ -49,7 +58,7 @@ const SinglePost = () => {
         <Card.Body>
           <Card.Title>
             <div className="d-flex justify-content-between align-items-center">
-              <h5>{postData.title}</h5>
+              <h5>{ad.title}</h5>
               <div>
                 <Button
                   as={Link}
@@ -68,7 +77,11 @@ const SinglePost = () => {
             </div>
           </Card.Title>
           <Card.Img
-            src="http://localhost:8000/uploads/about-us-1771434617202.jpg"
+            src={
+              ad.image
+                ? `http://localhost:8000/uploads/${ad.image}`
+                : 'http://localhost:8000/uploads/about-us-1771434617202.jpg'
+            }
             style={{
               height: '100%',
               objectFit: 'cover',
@@ -77,19 +90,19 @@ const SinglePost = () => {
 
           <Card.Text as="div">
             <p className="mb-1 mt-2">
-              <strong>Description:</strong> {postData.description}
+              <strong>Description:</strong> {ad.description}
             </p>
             <p className="mb-1">
-              <strong>Seller:</strong> {postData.seller}
+              <strong>Seller:</strong> {ad.seller}
             </p>
             <p className="mb-1">
-              <strong>Price:</strong> {postData.price}
+              <strong>Price:</strong> {ad.price}$
             </p>
             <p className="mb-2">
-              <strong>Published:</strong> {postData.publishedDate}
+              <strong>Published:</strong> {ad.publishedDate}
             </p>
             <p className="mb-1">
-              <strong>Location:</strong> {postData.location}
+              <strong>Location:</strong> {ad.location}
             </p>
           </Card.Text>
         </Card.Body>

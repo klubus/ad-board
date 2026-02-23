@@ -30,6 +30,7 @@ const MiniPostsList = () => {
                           ? `http://localhost:8000/uploads/${ad.image}`
                           : 'http://localhost:8000/uploads/about-us-1771434617202.jpg'
                       }
+                      style={{ height: '150px', objectFit: 'cover' }}
                     />
                   </Col>
 
@@ -44,9 +45,7 @@ const MiniPostsList = () => {
                     md={1}
                     className="d-flex justify-content-center align-items-center"
                   >
-                    <Card.Body>
-                      <Card.Text>{ad.price ? `${ad.price}$` : 'N/A'}</Card.Text>
-                    </Card.Body>
+                    <span>{ad.price ? `${ad.price}$` : 'N/A'}</span>
                   </Col>
 
                   <Col
