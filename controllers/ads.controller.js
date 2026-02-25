@@ -60,10 +60,7 @@ exports.editAd = async (req, res) => {
     ad.title = title;
     ad.description = description;
     ad.price = price;
-    ad.image = image;
     ad.location = location;
-    ad.seller = seller;
-
     if (req.file) {
       ad.image = req.file.filename;
     }

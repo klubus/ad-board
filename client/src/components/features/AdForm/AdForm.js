@@ -129,7 +129,12 @@ const AdForm = ({ action, actionText, ...props }) => {
       {props.seller && (
         <Form.Group className="mb-3">
           <Form.Label>Seller</Form.Label>
-          <Form.Control type="text" value={props.seller} disabled readOnly />
+          <Form.Control
+            type="text"
+            value={props.seller.login}
+            disabled
+            readOnly
+          />
         </Form.Group>
       )}
 

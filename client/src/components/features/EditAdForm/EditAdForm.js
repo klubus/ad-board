@@ -33,7 +33,7 @@ const EditAdForm = () => {
       actionText="Edit post"
       title={postData.title}
       seller={postData.seller}
-      publishedDate={postData.publishedDate}
+      createdAt={postData.createdAt}
       description={postData.description}
       price={postData.price}
       location={postData.location}

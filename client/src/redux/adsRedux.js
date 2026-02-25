@@ -1,5 +1,3 @@
-import shortid from 'shortid';
-
 // selectors
 export const getAllAds = (state) => state.ads;
 export const getAdById = ({ ads }, adId) => ads.find((ad) => ad._id === adId);
@@ -18,7 +16,34 @@ export const loadAds = (payload) => ({
 });
 
 export const addAd = (payload) => ({ type: ADD_AD, payload });
-export const editAd = (payload) => ({ type: EDIT_AD, payload });
+export const editAd = (adData) => {
+  return async (dispatch) => {
+    try {
+      const formData = new FormData();
+
+      formData.append('title', adData.title);
+      formData.append('description', adData.description);
+      formData.append('price', adData.price);
+      formData.append('location', adData.location);
+
+      if (adData.image instanceof File) {
+        formData.append('image', adData.image);
+      }
+
+      const res = await fetch(`http://localhost:8000/api/ads/${adData.id}`, {
+        method: 'PUT',
+        credentials: 'include',
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Failed to edit');
+
+      dispatch(fetchAds());
+    } catch (err) {
+      console.error(err);
+    }
+  };
+};
 export const deleteAd = (adId) => {
   return async (dispatch) => {
     try {
