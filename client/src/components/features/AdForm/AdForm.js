@@ -2,20 +2,18 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
 import 'react-quill/dist/quill.snow.css';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
 
-const PostForm = ({ action, actionText, ...props }) => {
+const AdForm = ({ action, actionText, ...props }) => {
   const [title, setTitle] = useState(props.title || '');
-  const [seller, setSeller] = useState(props.seller || '');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState(props.location || '');
   const [description, setDescription] = useState(props.description || '');
   const [price, setPrice] = useState(props.price || '');
   const [image, setImage] = useState(props.image || null);
 
   const [priceError, setPriceError] = useState(false);
-  const [locationError, setLocationError] = useState(false);
+  const [locationError, setLocationError] = useState('');
 
   const isPriceEmpty = price.toString().trim() === '';
 
@@ -28,7 +26,6 @@ const PostForm = ({ action, actionText, ...props }) => {
 
       action({
         title,
-        seller,
         location,
         description,
         price,
@@ -58,23 +55,6 @@ const PostForm = ({ action, actionText, ...props }) => {
         {errors.title && (
           <small className="d-block form-text text-danger mt-2">
             Title is too short (min 3 characters)
-          </small>
-        )}
-      </Form.Group>
-
-      {/* Seller */}
-      <Form.Group className="mb-3" controlId="formSeller">
-        <Form.Label>Seller</Form.Label>
-        <Form.Control
-          {...register('seller', { required: true, minLength: 3 })}
-          type="text"
-          placeholder="Enter seller"
-          value={seller}
-          onChange={(e) => setSeller(e.target.value)}
-        />
-        {errors.seller && (
-          <small className="d-block form-text text-danger mt-2">
-            Seller is too short (min 3 characters)
           </small>
         )}
       </Form.Group>
@@ -146,6 +126,13 @@ const PostForm = ({ action, actionText, ...props }) => {
         )}
       </Form.Group>
 
+      {props.seller && (
+        <Form.Group className="mb-3">
+          <Form.Label>Seller</Form.Label>
+          <Form.Control type="text" value={props.seller} disabled readOnly />
+        </Form.Group>
+      )}
+
       <Button variant="primary" type="submit">
         {actionText}
       </Button>
@@ -153,4 +140,4 @@ const PostForm = ({ action, actionText, ...props }) => {
   );
 };
 
-export default PostForm;
+export default AdForm;

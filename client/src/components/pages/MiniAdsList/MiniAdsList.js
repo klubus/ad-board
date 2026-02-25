@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
-const MiniPostsList = () => {
+const MiniAdsList = () => {
   const dispatch = useDispatch();
   const ads = useSelector(getAllAds);
 
@@ -54,7 +54,7 @@ const MiniPostsList = () => {
                   >
                     <Button
                       as={Link}
-                      to={`/post/${ad._id}`}
+                      to={`/ad/${ad._id}`}
                       variant="outline-info me-2"
                     >
                       Read more
@@ -72,4 +72,4 @@ const MiniPostsList = () => {
   );
 };
 
-export default MiniPostsList;
+export default MiniAdsList;

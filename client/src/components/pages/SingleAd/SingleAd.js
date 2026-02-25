@@ -9,7 +9,7 @@ import { fetchAds, getAdById } from '../../../redux/adsRedux';
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 
-const SinglePost = () => {
+const SingleAd = () => {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -22,7 +22,7 @@ const SinglePost = () => {
   if (!ad) {
     return (
       <Container className="w-50">
-        <p>Loading post...</p>
+        <p>Loading ad...</p>
       </Container>
     );
   }
@@ -42,7 +42,7 @@ const SinglePost = () => {
           </Modal.Header>
           <Modal.Body>
             <p>
-              This operation will completely remove this post from the app. Are
+              This operation will completely remove this ad from the app. Are
               you sure you want to do that?
             </p>
           </Modal.Body>
@@ -62,7 +62,7 @@ const SinglePost = () => {
               <div>
                 <Button
                   as={Link}
-                  to={`/post/edit/1`}
+                  to={`/ad/edit/${ad._id}`}
                   variant="outline-info me-2"
                 >
                   Edit
@@ -93,7 +93,7 @@ const SinglePost = () => {
               <strong>Description:</strong> {ad.description}
             </p>
             <p className="mb-1">
-              <strong>Seller:</strong> {ad.seller}
+              <strong>Seller:</strong> {ad.seller?.login}
             </p>
             <p className="mb-1">
               <strong>Price:</strong> {ad.price}$
@@ -111,4 +111,4 @@ const SinglePost = () => {
   );
 };
 
-export default SinglePost;
+export default SingleAd;

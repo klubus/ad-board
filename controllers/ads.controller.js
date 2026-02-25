@@ -1,8 +1,9 @@
 const Ad = require('../models/Ad.model');
+const mongoose = require('mongoose');
 
 exports.getAll = async (req, res) => {
   try {
-    res.json(await Ad.find({}));
+    res.json(await Ad.find({}).populate('seller', 'login'));
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -10,7 +11,7 @@ exports.getAll = async (req, res) => {
 
 exports.getAdById = async (req, res) => {
   try {
-    const ad = await Ad.findById(req.params.id);
+    const ad = await Ad.findById(req.params.id).populate('seller', 'login');
     if (!ad) res.status(404).json({ message: 'Not found' });
     else res.json(ad);
   } catch (err) {
@@ -23,12 +24,20 @@ exports.createAd = async (req, res) => {
     const { title, description, price, location, seller } = req.body;
     let image = req.file ? req.file.filename : req.body.image;
 
+    if (!req.session.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    console.log('BODY:', req.body);
+    console.log('FILE:', req.file);
+    console.log('SESSION USER:', req.session.user);
+
     const newAd = new Ad({
       title,
       description,
       price,
       location,
-      seller,
+      seller: new mongoose.Types.ObjectId(req.session.user.id),
       image,
     });
 

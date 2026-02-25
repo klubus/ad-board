@@ -22,7 +22,12 @@ const upload = multer({ storage });
 // === ROUTES ===
 router.get('/ads', AdController.getAll);
 router.get('/ads/:id', AdController.getAdById);
-router.post('/ads', upload.single('image'), AdController.createAd);
+router.post(
+  '/ads',
+  authMiddleware,
+  upload.single('image'),
+  AdController.createAd
+);
 router.put(
   '/ads/:id',
   authMiddleware,

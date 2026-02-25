@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import MiniPostsList from '../MiniPostsList/MiniPostsList';
+import MiniAdsList from '../MiniAdsList/MiniAdsList';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -19,15 +19,15 @@ const Home = () => {
   return (
     <section>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="m-4">All posts</h2>
-        <Button as={Link} to={`/post/add`} variant="outline-info">
-          Add post
+        <h2 className="m-4">All ads</h2>
+        <Button as={Link} to={`/ad/add`} variant="outline-info">
+          Add ad
         </Button>
       </div>
 
       <Container>
         <Row>
-          <MiniPostsList posts={ads} />
+          <MiniAdsList ads={ads} />
         </Row>
       </Container>
     </section>
