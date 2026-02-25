@@ -1,5 +1,7 @@
 const Ad = require('../models/Ad.model');
 const mongoose = require('mongoose');
+const path = require('path');
+const fs = require('fs');
 
 exports.getAll = async (req, res) => {
   try {
@@ -27,10 +29,6 @@ exports.createAd = async (req, res) => {
     if (!req.session.user) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-
-    console.log('BODY:', req.body);
-    console.log('FILE:', req.file);
-    console.log('SESSION USER:', req.session.user);
 
     const newAd = new Ad({
       title,
@@ -86,15 +84,35 @@ exports.editAd = async (req, res) => {
 exports.deleteAd = async (req, res) => {
   try {
     const ad = await Ad.findById(req.params.id);
-    if (ad) {
-      await Ad.deleteOne({ _id: req.params.id });
-      res.json({ message: 'OK' });
-    } else res.status(404).json({ message: 'Not found...' });
+
+    if (!ad) {
+      return res.status(404).json({ message: 'Not found...' });
+    }
+
+    if (ad.image) {
+      const filePath = path.join(
+        __dirname,
+        '..',
+        'public',
+        'uploads',
+        ad.image
+      );
+      fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (!err) {
+          fs.unlink(filePath, (err) => {
+            if (err) console.error('Error deleting file:', err);
+          });
+        }
+      });
+    }
+
+    await Ad.deleteOne({ _id: req.params.id });
+
+    res.json({ message: 'OK' });
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err.message });
   }
 };
-
 exports.getAdBySearchPhrase = async (req, res) => {
   try {
     const searchPhrase = req.params.searchPhrase;

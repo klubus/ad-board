@@ -3,9 +3,9 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAds, getAdById } from '../../../redux/adsRedux';
+import { deleteAd, fetchAds, getAdById } from '../../../redux/adsRedux';
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 
@@ -14,6 +14,7 @@ const SingleAd = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const ad = useSelector((state) => getAdById(state, id));
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchAds());
@@ -33,6 +34,12 @@ const SingleAd = () => {
   function hideDeleteModal() {
     setShowModal(false);
   }
+
+  function removeAd() {
+    dispatch(deleteAd(id));
+    navigate('/');
+  }
+
   return (
     <Container className="w-50">
       {showModal && (
@@ -50,7 +57,9 @@ const SingleAd = () => {
             <Button variant="secondary" onClick={hideDeleteModal}>
               Cancel
             </Button>
-            <Button variant="danger">Remove</Button>
+            <Button variant="danger" onClick={removeAd}>
+              Remove
+            </Button>
           </Modal.Footer>
         </Modal>
       )}

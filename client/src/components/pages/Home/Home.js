@@ -5,7 +5,6 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { Link } from 'react-router-dom';
-
 import { fetchAds, getAllAds } from '../../../redux/adsRedux';
 
 const Home = () => {
