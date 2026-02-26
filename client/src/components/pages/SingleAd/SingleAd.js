@@ -8,13 +8,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { deleteAd, fetchAds, getAdById } from '../../../redux/adsRedux';
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
 
 const SingleAd = () => {
   const [showModal, setShowModal] = useState(false);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const { id } = useParams();
   const ad = useSelector((state) => getAdById(state, id));
   const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(fetchAds());
@@ -27,6 +30,7 @@ const SingleAd = () => {
       </Container>
     );
   }
+  const canEdit = currentUser && ad.seller === currentUser?.login;
   function showDeleteModal() {
     setShowModal(true);
   }
@@ -68,21 +72,23 @@ const SingleAd = () => {
           <Card.Title>
             <div className="d-flex justify-content-between align-items-center">
               <h5>{ad.title}</h5>
-              <div>
-                <Button
-                  as={Link}
-                  to={`/ad/edit/${ad._id}`}
-                  variant="outline-info me-2"
-                >
-                  Edit
-                </Button>
-                <button
-                  className="btn btn-outline-danger"
-                  onClick={showDeleteModal}
-                >
-                  Delete
-                </button>
-              </div>
+              {canEdit && (
+                <div>
+                  <Button
+                    as={Link}
+                    to={`/ad/edit/${ad._id}`}
+                    variant="outline-info me-2"
+                  >
+                    Edit
+                  </Button>
+                  <button
+                    className="btn btn-outline-danger"
+                    onClick={showDeleteModal}
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           </Card.Title>
           <Card.Img
@@ -102,7 +108,7 @@ const SingleAd = () => {
               <strong>Description:</strong> {ad.description}
             </p>
             <p className="mb-1">
-              <strong>Seller:</strong> {ad.seller?.login}
+              <strong>Seller:</strong> {ad.seller}
             </p>
             <p className="mb-1">
               <strong>Price:</strong> {ad.price}$

@@ -2,10 +2,11 @@ const Ad = require('../models/Ad.model');
 const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
+const User = require('../models/User.model');
 
 exports.getAll = async (req, res) => {
   try {
-    res.json(await Ad.find({}).populate('seller', 'login'));
+    res.json(await Ad.find({}).populate('seller', 'login _id'));
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -13,7 +14,7 @@ exports.getAll = async (req, res) => {
 
 exports.getAdById = async (req, res) => {
   try {
-    const ad = await Ad.findById(req.params.id).populate('seller', 'login');
+    const ad = await Ad.findById(req.params.id).populate('seller', 'login _id');
     if (!ad) res.status(404).json({ message: 'Not found' });
     else res.json(ad);
   } catch (err) {
@@ -23,11 +24,11 @@ exports.getAdById = async (req, res) => {
 
 exports.createAd = async (req, res) => {
   try {
-    const { title, description, price, location, seller } = req.body;
+    const { title, description, price, location, sellerLogin } = req.body;
     let image = req.file ? req.file.filename : req.body.image;
 
-    if (!req.session.user) {
-      return res.status(401).json({ message: 'Unauthorized' });
+    if (!sellerLogin) {
+      return res.status(400).json({ message: 'No seller provided' });
     }
 
     const newAd = new Ad({
@@ -35,26 +36,30 @@ exports.createAd = async (req, res) => {
       description,
       price,
       location,
-      seller: new mongoose.Types.ObjectId(req.session.user.id),
+      seller: sellerLogin,
       image,
     });
 
     await newAd.save();
     res.status(201).json(newAd);
   } catch (err) {
-    res.status(500).json({ message: err.message, errors: err.errors });
+    res.status(500).json({ message: err.message });
   }
 };
-
 exports.editAd = async (req, res) => {
-  const { title, description, price, image, location, seller } = req.body;
+  const { title, description, price, image, location } = req.body;
   try {
     const ad = await Ad.findById(req.params.id);
-
+    
     if (!ad) {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(404).json({ message: 'Not found...' });
     }
+    if (!req.session.user || ad.seller !== req.session.user.login) {
+      if (req.file) fs.unlinkSync(req.file.path);
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
     const oldImage = ad.image;
 
     ad.title = title;
@@ -84,6 +89,10 @@ exports.deleteAd = async (req, res) => {
 
     if (!ad) {
       return res.status(404).json({ message: 'Not found...' });
+    }
+
+    if (!req.session.user || ad.seller !== req.session.user.login) {
+      return res.status(403).json({ message: 'Forbidden' });
     }
 
     if (ad.image) {

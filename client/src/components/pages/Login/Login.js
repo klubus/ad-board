@@ -1,42 +1,27 @@
 import { Alert, AlertHeading, Button, Form, Spinner } from 'react-bootstrap';
 import { useState } from 'react';
-import { API_URL } from '../../../config';
 import { useDispatch } from 'react-redux';
-import { logIn } from '../../../redux/usersRedux';
+import { logInUser } from '../../../redux/usersRedux';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState(null); //null, 'loading', 'success', 'serverError', 'clientError'
+  const [status, setStatus] = useState(null); // null, 'loading', 'success', 'serverError', 'clientError'
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setStatus('loading');
 
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ login, password }),
-    };
-
-    fetch(`${API_URL}/auth/login`, options)
-      .then((res) => {
-        if (res.status === 200) {
-          setStatus('success');
-          dispatch(logIn({ login }));
-          navigate('/');
-        } else if (res.status === 400) {
-          setStatus('clientError');
-        } else {
-          setStatus('serverError');
-        }
+    dispatch(logInUser(login, password))
+      .then(() => {
+        setStatus('success');
+        navigate('/');
       })
-      .catch((err) => {
-        setStatus('serverError');
+      .catch(() => {
+        setStatus('clientError');
       });
   };
 
@@ -78,7 +63,7 @@ const Login = () => {
           value={login}
           onChange={(e) => setLogin(e.target.value)}
           placeholder="Enter login"
-        ></Form.Control>
+        />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formPassword">
@@ -88,7 +73,7 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter password"
-        ></Form.Control>
+        />
       </Form.Group>
 
       <Button variant="primary" type="submit">

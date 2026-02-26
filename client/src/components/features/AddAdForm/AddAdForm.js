@@ -2,10 +2,12 @@ import { useDispatch } from 'react-redux';
 import { addAd } from '../../../redux/adsRedux.js';
 import { useNavigate } from 'react-router-dom';
 import AdForm from '../AdForm/AdForm.js';
+import { useSelector } from 'react-redux';
 
 const AddAdForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
   const handleSubmit = async (ad) => {
     try {
       const formData = new FormData();
@@ -14,11 +16,11 @@ const AddAdForm = () => {
       formData.append('location', ad.location);
       formData.append('description', ad.description);
       formData.append('price', Number(ad.price));
+      formData.append('sellerLogin', user.login);
 
       if (ad.image instanceof File) {
         formData.append('image', ad.image);
       }
-
       const res = await fetch('http://localhost:8000/api/ads', {
         method: 'POST',
         body: formData,

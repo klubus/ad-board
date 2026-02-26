@@ -52,7 +52,6 @@ exports.login = async (req, res) => {
       typeof password === 'string'
     ) {
       const user = await User.findOne({ login });
-
       if (!user) {
         return res
           .status(400)
@@ -60,10 +59,14 @@ exports.login = async (req, res) => {
       } else {
         if (bcrypt.compareSync(password, user.password)) {
           req.session.user = {
-            id: user._id,
+            _id: user._id,
             login: user.login,
           };
-          res.status(200).send({ message: 'Login successful' });
+          return res.status(200).json({
+            _id: req.session.user._id,
+            login: req.session.user.login,
+            message: 'Login successful',
+          });
         } else {
           res.status(400).send({ message: 'Login or password is incorrect' });
         }
@@ -76,8 +79,15 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.getUser = async (req, res) => {
-  res.send('You are logged!');
+exports.getCurrentUser = async (req, res) => {
+
+  if (!req.session.user) {
+    return res.status(401).send({ message: 'Unauthorized' });
+  }
+  res.status(200).json({
+    _id: req.session.user._id,
+    login: req.session.user.login,
+  });
 };
 
 exports.deleteSession = async (req, res) => {

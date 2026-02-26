@@ -16,17 +16,21 @@ const NavBar = () => {
         </Navbar.Brand>
 
         <Nav className="ms-auto">
+          {user && (
+            <span className="navbar-text me-3">
+              Logged as: <strong>{user.login}</strong>
+            </span>
+          )}
+
           <Nav.Link as={NavLink} to="/">
             Home
           </Nav.Link>
 
-          {user && (
+          {user ? (
             <Nav.Link as={NavLink} to="/logout">
               Sign out
             </Nav.Link>
-          )}
-
-          {!user && (
+          ) : (
             <>
               <Nav.Link as={NavLink} to="/login">
                 Sign in

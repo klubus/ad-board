@@ -16,6 +16,28 @@ export const logOut = () => ({
   type: LOG_OUT,
 });
 
+export const logInUser = (login, password) => {
+  return async (dispatch) => {
+    try {
+      const res = await fetch('http://localhost:8000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // <- kluczowe, żeby cookies były zapisane
+        body: JSON.stringify({ login, password }),
+      });
+
+      if (!res.ok) throw new Error('Login failed');
+
+      const data = await res.json(); // np. { _id, login, message }
+
+      // wywołujemy Twoją istniejącą akcję logIn
+      dispatch(logIn(data));
+    } catch (err) {
+      console.error('Login error:', err);
+    }
+  };
+};
+
 const usersReducer = (statePart = null, action) => {
   switch (action.type) {
     case LOG_IN:
