@@ -75,6 +75,21 @@ export const fetchAds = () => {
   };
 };
 
+export const searchAds = (searchPhrase) => {
+  return async (dispatch) => {
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/ads/search/${searchPhrase}`
+      );
+
+      const ads = await res.json();
+      dispatch(loadAds(ads));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+};
+
 const adsReducer = (statePart = [], action) => {
   switch (action.type) {
     case LOAD_ADS:

@@ -50,7 +50,7 @@ exports.editAd = async (req, res) => {
   const { title, description, price, image, location } = req.body;
   try {
     const ad = await Ad.findById(req.params.id);
-    
+
     if (!ad) {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(404).json({ message: 'Not found...' });
@@ -125,11 +125,7 @@ exports.getAdBySearchPhrase = async (req, res) => {
 
     const ads = await Ad.find({
       title: { $regex: searchPhrase, $options: 'i' },
-    });
-
-    if (!ads.length) {
-      return res.status(404).json({ message: 'Not found' });
-    }
+    }).populate('seller', 'login _id');
 
     res.json(ads);
   } catch (err) {
