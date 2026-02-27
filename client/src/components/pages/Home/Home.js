@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { Link } from 'react-router-dom';
 import { fetchAds, getAllAds } from '../../../redux/adsRedux';
+import { getUser } from '../../../redux/usersRedux';
 import { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import { searchAds } from '../../../redux/adsRedux';
@@ -12,10 +13,8 @@ import { searchAds } from '../../../redux/adsRedux';
 const Home = () => {
   const [searchPhrase, setSearchPhrase] = useState('');
   const dispatch = useDispatch();
-  const ads = useSelector(getAllAds);
-  const filteredAds = ads.filter((ad) =>
-    ad.title.toLowerCase().includes(searchPhrase.toLowerCase())
-  );
+  const user = useSelector(getUser);
+  const ads = useSelector(getAllAds) || [];
 
   useEffect(() => {
     if (searchPhrase.trim() === '') {
@@ -24,14 +23,18 @@ const Home = () => {
       dispatch(searchAds(searchPhrase));
     }
   }, [searchPhrase, dispatch]);
+
   return (
     <section>
       <div className="d-flex justify-content-between align-items-center">
         <h2 className="m-4">All ads</h2>
-        <Button as={Link} to={`/ad/add`} variant="outline-info">
-          Add ad
-        </Button>
+        {user && (
+          <Button as={Link} to={`/ad/add`} variant="outline-info">
+            Add ad
+          </Button>
+        )}
       </div>
+
       <Form className="mx-4 mb-3">
         <Form.Control
           type="text"
@@ -40,9 +43,10 @@ const Home = () => {
           onChange={(e) => setSearchPhrase(e.target.value)}
         />
       </Form>
+
       <Container>
         <Row>
-          <MiniAdsList ads={filteredAds} />{' '}
+          <MiniAdsList ads={ads} />
         </Row>
       </Container>
     </section>
