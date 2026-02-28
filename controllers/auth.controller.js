@@ -6,7 +6,7 @@ const fs = require('fs');
 
 exports.register = async (req, res) => {
   try {
-    const { login, password } = req.body;
+    const { login, password, phone } = req.body;
     const fileType = req.file ? await getImageFileType(req.file) : 'unknown';
 
     if (
@@ -14,6 +14,8 @@ exports.register = async (req, res) => {
       typeof login === 'string' &&
       password &&
       typeof password === 'string' &&
+      phone &&
+      typeof phone === 'string' &&
       req.file &&
       ['image/png', 'image/jpeg', 'image/gif'].includes(fileType)
     ) {
@@ -29,6 +31,7 @@ exports.register = async (req, res) => {
         login,
         password: await bcrypt.hash(password, 10),
         avatar: req.file.filename,
+        phone,
       });
       res.status(201).send({ message: 'User created: ' + user.login });
     } else {
@@ -80,7 +83,6 @@ exports.login = async (req, res) => {
 };
 
 exports.getCurrentUser = async (req, res) => {
-
   if (!req.session.user) {
     return res.status(401).send({ message: 'Unauthorized' });
   }

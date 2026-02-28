@@ -6,7 +6,7 @@ const User = require('../models/User.model');
 
 exports.getAll = async (req, res) => {
   try {
-    res.json(await Ad.find({}).populate('seller', 'login _id'));
+    res.json(await Ad.find({}).populate('seller', 'login phone avatar'));
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -14,7 +14,10 @@ exports.getAll = async (req, res) => {
 
 exports.getAdById = async (req, res) => {
   try {
-    const ad = await Ad.findById(req.params.id).populate('seller', 'login _id');
+    const ad = await Ad.findById(req.params.id).populate(
+      'seller',
+      'login phone avatar'
+    );
     if (!ad) res.status(404).json({ message: 'Not found' });
     else res.json(ad);
   } catch (err) {
@@ -24,19 +27,18 @@ exports.getAdById = async (req, res) => {
 
 exports.createAd = async (req, res) => {
   try {
-    const { title, description, price, location, sellerLogin } = req.body;
+    const { title, description, price, location } = req.body;
     let image = req.file ? req.file.filename : req.body.image;
 
-    if (!sellerLogin) {
-      return res.status(400).json({ message: 'No seller provided' });
+    if (!req.session.user) {
+      return res.status(403).json({ message: 'Not logged in' });
     }
-
     const newAd = new Ad({
       title,
       description,
       price,
       location,
-      seller: sellerLogin,
+      seller: req.session.user._id,
       image,
     });
 
@@ -47,7 +49,7 @@ exports.createAd = async (req, res) => {
   }
 };
 exports.editAd = async (req, res) => {
-  const { title, description, price, image, location } = req.body;
+  const { title, description, price, location } = req.body;
   try {
     const ad = await Ad.findById(req.params.id);
 
@@ -55,7 +57,10 @@ exports.editAd = async (req, res) => {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(404).json({ message: 'Not found...' });
     }
-    if (!req.session.user || ad.seller !== req.session.user.login) {
+    if (
+      !req.session.user ||
+      ad.seller.toString() !== req.session.user._id.toString()
+    ) {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(403).json({ message: 'Forbidden' });
     }
@@ -91,7 +96,10 @@ exports.deleteAd = async (req, res) => {
       return res.status(404).json({ message: 'Not found...' });
     }
 
-    if (!req.session.user || ad.seller !== req.session.user.login) {
+    if (
+      !req.session.user ||
+      ad.seller.toString() !== req.session.user._id.toString()
+    ) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
@@ -125,7 +133,7 @@ exports.getAdBySearchPhrase = async (req, res) => {
 
     const ads = await Ad.find({
       title: { $regex: searchPhrase, $options: 'i' },
-    }).populate('seller', 'login _id');
+    }).populate('seller', 'login phone avatar');
 
     res.json(ads);
   } catch (err) {

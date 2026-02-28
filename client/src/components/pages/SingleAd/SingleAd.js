@@ -8,7 +8,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { deleteAd, fetchAds, getAdById } from '../../../redux/adsRedux';
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
-import { useCurrentUser } from '../../../hooks/useCurrentUser';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 const SingleAd = () => {
   const [showModal, setShowModal] = useState(false);
@@ -22,7 +24,7 @@ const SingleAd = () => {
   useEffect(() => {
     dispatch(fetchAds());
   }, [dispatch]);
-
+  console.log(ad);
   if (!ad) {
     return (
       <Container className="w-50">
@@ -30,7 +32,8 @@ const SingleAd = () => {
       </Container>
     );
   }
-  const canEdit = currentUser && ad.seller === currentUser?.login;
+  const canEdit =
+    currentUser && ad.seller?._id?.toString() === currentUser?._id?.toString();
   function showDeleteModal() {
     setShowModal(true);
   }
@@ -103,22 +106,74 @@ const SingleAd = () => {
             }}
           />
 
-          <Card.Text as="div">
-            <p className="mb-1 mt-2">
-              <strong>Description:</strong> {ad.description}
-            </p>
-            <p className="mb-1">
-              <strong>Seller:</strong> {ad.seller}
-            </p>
-            <p className="mb-1">
-              <strong>Price:</strong> {ad.price}$
-            </p>
-            <p className="mb-2">
-              <strong>Published:</strong> {ad.publishedDate}
-            </p>
-            <p className="mb-1">
-              <strong>Location:</strong> {ad.location}
-            </p>
+          <Card.Text as="div" className="mt-4">
+            <ListGroup>
+              <ListGroup.Item variant="primary">
+                <strong>Product info:</strong>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <p className="mb-1 mt-2">{ad.description}</p>
+              </ListGroup.Item>
+              <br></br>
+              <Row className="mb-4">
+                <Col>
+                  <ListGroup.Item variant="secondary">
+                    <strong>Location:</strong>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <p className="mb-1">{ad.location}</p>
+                  </ListGroup.Item>
+                </Col>
+                <Col>
+                  <ListGroup.Item variant="secondary">
+                    <strong>Price:</strong>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <p className="mb-1">{ad.price}$</p>
+                  </ListGroup.Item>
+                </Col>
+              </Row>
+              <ListGroup.Item variant="info">
+                <strong>Seller</strong>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <Row className="mb-4">
+                  <Col>
+                    <div className="d-flex flex-column gap-5">
+                      <h4>{ad.seller?.login}</h4>
+                      <div>
+                        {' '}
+                        <strong>Phone: </strong>
+                        {ad.seller?.phone}
+                      </div>
+                    </div>
+                  </Col>
+                  <Col xs={4} md={3} className="text-center">
+                    {ad.seller?.avatar && (
+                      <img
+                        src={`http://localhost:8000/uploads/${ad.seller.avatar}`}
+                        alt="avatar"
+                        className="img-fluid rounded-circle shadow-sm"
+                        style={{
+                          width: '100px',
+                          height: '100px',
+                          objectFit: 'cover',
+                        }}
+                      />
+                    )}
+                  </Col>
+                </Row>
+              </ListGroup.Item>{' '}
+            </ListGroup>
+            <ListGroup variant="flush" className="mt-4">
+              <ListGroup.Item>
+                {' '}
+                <p className="mb-2">
+                  <strong>Published:</strong>{' '}
+                  {new Date(ad.createdAt).toLocaleDateString()}
+                </p>
+              </ListGroup.Item>
+            </ListGroup>
           </Card.Text>
         </Card.Body>
       </Card>
